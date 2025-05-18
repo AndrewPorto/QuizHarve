@@ -5,8 +5,9 @@ import "../App.css";
 const Quiz = () => {
   const [perguntas, setPerguntas] = useState([]);
   const [respostasSelecionadas, setRespostasSelecionadas] = useState([]);
+  const [position, setPosition] = useState(0)
 
-  // Função para buscar as perguntas da API
+
   useEffect(() => {
     axios
       .get("http://localhost:3000/perguntas")
@@ -18,12 +19,20 @@ const Quiz = () => {
       });
   }, []);
 
-  // Função para lidar com a seleção de respostas
+
   const handleRespostaSelecionada = (perguntaId, respostaId) => {
     setRespostasSelecionadas((prev) => ({
       ...prev,
       [perguntaId]: respostaId,
     }));
+  };
+
+    const moverToLeft = () => {
+    setPosition((prevDeslocamento) => prevDeslocamento + 450);
+  };
+
+  const moverToRight = () => {
+    setPosition((prevDeslocamento) => prevDeslocamento - 450);
   };
 
   const verificarResultado = () => {
@@ -43,7 +52,13 @@ const Quiz = () => {
       <h1 className="">Quiz de Front-End</h1>
       <div className="quests">
         {perguntas.map((pergunta) => (
-          <div key={pergunta.id} className="quest">
+          <div key={pergunta.id} className="quest"
+          style={{
+          transform: `translateX(${position}px)`,
+          transition: 'transform 0.5s ease', // Adiciona transição suave
+        }}
+          
+          >
             <h3 className="title">{pergunta.pergunta}</h3>
             {pergunta.respostas.map((resposta) => (
               <div key={resposta.id}>
@@ -67,11 +82,11 @@ const Quiz = () => {
         ))}
       </div>
       <div className="btn">
-        <button>4</button>
+        <button onClick={moverToLeft}>4</button>
         <button className="btn" onClick={verificarResultado}>
           Ver Resultado
         </button>
-        <button>6</button>
+        <button onClick={moverToRight}>6</button>
       </div>
     </div>
   );
